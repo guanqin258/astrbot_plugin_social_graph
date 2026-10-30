@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>记忆中心</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="dot"></span>
+          <div>
+            <h1>记忆中心</h1>
+            <p id="statsLine">正在加载…</p>
+          </div>
+        </div>
+        <nav class="tabs">
+          <button class="tab active" data-tab="people" type="button">人物</button>
+          <button class="tab" data-tab="relations" type="button">关系网</button>
+          <button class="tab" data-tab="feed" type="button">消息流</button>
+          <button class="tab" data-tab="config" type="button">设置</button>
+        </nav>
+        <div class="actions">
+          <button id="extractBtn" class="btn ghost" type="button">立刻整理</button>
+          <button id="refreshBtn" class="btn" type="button">刷新</button>
+        </div>
+      </header>
+
+      <div id="notice" class="notice hidden"></div>
+
+      <main class="panes">
+        <!-- 人物 -->
+        <section class="pane active" data-pane="people">
+          <aside class="list-pane">
+            <input id="search" class="search" type="search" placeholder="搜索昵称 / QQ / 印象" autocomplete="off" />
+            <div id="peopleList" class="people-list"></div>
+          </aside>
+          <section class="detail-pane">
+            <div id="personEmpty" class="empty">左边点一个人，看她的印象、关系和说过的话。</div>
+            <div id="personDetail" class="hidden">
+              <div class="detail-head">
+                <div class="avatar" id="pAvatar">?</div>
+                <div class="idbox">
+                  <input id="pNickname" class="nick" type="text" placeholder="昵称" />
+                  <div class="meta">
+                    <span id="pUid" class="mono"></span>
+                    <span id="pCount"></span>
+                    <span id="pAff"></span>
+                    <span id="pSeen"></span>
+                  </div>
+                </div>
+                <div class="head-actions">
+                  <button id="savePerson" class="btn" type="button">保存</button>
+                  <button id="deletePerson" class="btn danger" type="button">删除</button>
+                </div>
+              </div>
+
+              <label class="field">
+                <span>印象 <em id="pImpAt"></em></span>
+                <textarea id="pImpression" rows="7" placeholder="她对这个人的认识…"></textarea>
+              </label>
+
+              <div class="block">
+                <div class="block-head">
+                  <span>关系</span>
+                </div>
+                <div id="pRelations" class="rel-list"></div>
+                <form id="relForm" class="rel-form">
+                  <input id="relOther" class="grow" type="text" placeholder="对方 QQ 号" />
+                  <input id="relText" class="grow" type="text" placeholder="关系，如 同学 / 室友" />
+                  <input id="relConf" class="small" type="number" step="0.05" min="0" max="1" value="0.6" />
+                  <button class="btn" type="submit">添加</button>
+                </form>
+              </div>
+
+              <div class="block">
+                <div class="block-head"><span>最近说过的话</span></div>
+                <div id="pEvents" class="event-list"></div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- 关系网 -->
+        <section class="pane" data-pane="relations">
+          <div class="table-wrap">
+            <table class="grid">
+              <thead>
+                <tr><th>A</th><th>关系</th><th>B</th><th>可信度</th><th>证据</th><th></th></tr>
+              </thead>
+              <tbody id="relBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 消息流 -->
+        <section class="pane" data-pane="feed">
+          <div class="feed-tools">
+            <label class="inline">
+              <span>会话 ID</span>
+              <input id="feedChat" type="text" placeholder="群号，留空=全部" />
+            </label>
+            <button id="feedReload" class="btn ghost" type="button">重新载入</button>
+          </div>
+          <div id="feedList" class="feed"></div>
+        </section>
+
+        <!-- 设置 -->
+        <section class="pane" data-pane="config">
+          <form id="configForm" class="cfg-form">
+            <label class="field"><span>攒够多少条消息就整理</span>
+              <input name="batch_min" type="number" min="5" /></label>
+            <label class="field"><span>闲置多少秒后整理</span>
+              <input name="idle_secs" type="number" min="60" /></label>
+            <label class="field"><span>两次整理最小间隔（秒）</span>
+              <input name="min_gap_secs" type="number" min="30" /></label>
+            <label class="field"><span>私聊时带多少小时内的最近消息</span>
+              <input name="recent_hours" type="number" min="1" /></label>
+            <label class="field"><span>原始消息保留天数</span>
+              <input name="keep_days" type="number" min="1" /></label>
+            <label class="field"><span>整理用的模型 Provider ID</span>
+              <input name="extract_provider_id" type="text" /></label>
+
+            <label class="check"><input name="inject_enabled" type="checkbox" /><span>聊天时注入记忆</span></label>
+            <label class="check"><input name="interject_enabled" type="checkbox" /><span>群里偶尔插话</span></label>
+            <label class="field"><span>插话概率（%）</span>
+              <input name="interject_probability" type="number" min="0" max="100" step="0.5" /></label>
+            <label class="field"><span>每群每天最多插几句</span>
+              <input name="interject_daily_limit" type="number" min="0" /></label>
+            <label class="field"><span>插话最小间隔（分钟）</span>
+              <input name="interject_cooldown_min" type="number" min="0" /></label>
+
+            <div class="cfg-actions">
+              <button class="btn" type="submit">保存设置</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>
