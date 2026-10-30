@@ -1,0 +1,64 @@
+{
+  "batch_min": {
+    "type": "int",
+    "description": "攒够多少条消息就抽取一次",
+    "default": 40,
+    "hint": "群聊热闹时可调大（60-80）省 token；安静时靠 idle_secs 兜底。"
+  },
+  "idle_secs": {
+    "type": "int",
+    "description": "闲置多少秒后即使没攒够也抽取",
+    "default": 900
+  },
+  "min_gap_secs": {
+    "type": "int",
+    "description": "两次抽取之间的最小间隔（秒）",
+    "default": 300
+  },
+  "extract_provider_id": {
+    "type": "string",
+    "description": "抽取用的模型 provider id，留空则用默认对话模型",
+    "default": "deepseek/deepseek-flash"
+  },
+  "inject_enabled": {
+    "type": "bool",
+    "description": "是否把印象/关系注入到对话里",
+    "default": true
+  },
+  "keep_days": {
+    "type": "int",
+    "description": "原始消息保留天数",
+    "default": 30
+  },
+  "recent_hours": {
+    "type": "int",
+    "description": "私聊时带多少小时内的群里消息",
+    "default": 6
+  },
+  "interject_enabled": {
+    "type": "bool",
+    "description": "群里没 @ 她时，是否允许她偶尔自己接一句",
+    "default": true
+  },
+  "interject_probability": {
+    "type": "int",
+    "description": "每条群消息考虑插话的概率（%）",
+    "default": 10,
+    "hint": "10 表示一条群消息有十分之一的机会进入「要不要接话」的判断；多数时候她会选择不接。"
+  },
+  "interject_daily_limit": {
+    "type": "int",
+    "description": "每个群每天最多插话几次",
+    "default": 8
+  },
+  "interject_cooldown_min": {
+    "type": "int",
+    "description": "两次插话之间至少隔多少分钟",
+    "default": 25
+  },
+  "interject_provider_id": {
+    "type": "string",
+    "description": "判断要不要插话用的模型，留空则跟抽取模型一致",
+    "default": ""
+  }
+}
